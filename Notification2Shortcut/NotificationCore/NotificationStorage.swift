@@ -6,6 +6,6 @@
 //
 
 protocol NotificationStorage {
-    var notifications: [Notification] { get }
-    mutating func add(_ notification: Notification)
+    var notifications: [N2SNotification] { get }
+    mutating func add(_ notification: N2SNotification)
 }

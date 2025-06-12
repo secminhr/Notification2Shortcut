@@ -10,7 +10,7 @@ import Cocoa
 import UserNotifications
 
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
-   func applicationDidFinishLaunching(_ notification: Notification) {
+   func applicationDidFinishLaunching(_ notification: N2SNotification) {
        UNUserNotificationCenter.current().delegate = self
    }
 
