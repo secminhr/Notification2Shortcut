@@ -7,33 +7,36 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
+    @State private var title: String = ""
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        
+        VStack {
+            TextField("Title", text: $title)
+            Button("Send") {
+                let content = UNMutableNotificationContent()
+                content.title = title
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                let request = UNNotificationRequest(identifier: "test", content: content, trigger: trigger)
+                
+                let center = UNUserNotificationCenter.current()
+                center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+                    if granted {
+                        center.add(request) { addError in
+                            if let addError = addError {
+                                print("Failed to add notification: \(addError.localizedDescription)")
+                            }
+                        }
+                    } else if let error = error {
+                        print("Authorization error: \(error.localizedDescription)")
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-            .toolbar {
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
         }
     }
 

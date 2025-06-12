@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct Notification2ShortcutApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
