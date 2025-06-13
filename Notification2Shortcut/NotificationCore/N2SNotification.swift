@@ -5,6 +5,8 @@
 //  Created by secminhr on 2025/6/13.
 //
 
+import Foundation
+
 @propertyWrapper
 struct NonEmpty {
     private let defaultValue: String
@@ -29,14 +31,19 @@ struct NonEmpty {
 
 struct N2SNotification: Equatable {
     static func == (lhs: N2SNotification, rhs: N2SNotification) -> Bool {
-        return lhs.title == rhs.title && lhs.subtitle == rhs.subtitle && lhs.body == rhs.body
+        return  lhs.notificationSendingId == rhs.notificationSendingId &&
+                lhs.title == rhs.title &&
+                lhs.subtitle == rhs.subtitle &&
+                lhs.body == rhs.body
     }
     
+    var notificationSendingId: String
     @NonEmpty(defaultValue: "Title") var title: String
     var subtitle: String? = nil
     var body: String? = nil
     
-    init(_ title: String = "") {
+    init(_ title: String = "", notificationSendingId: String = UUID().uuidString) {
+        self.notificationSendingId = notificationSendingId
         self.title = title
     }
 }

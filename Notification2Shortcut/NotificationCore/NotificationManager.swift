@@ -41,7 +41,7 @@ class NotificationManager {
         }
         
         do {
-            try await sender.sendNotification(id: id, notification: notification, trigger: trigger)
+            try await sender.sendNotification(notification: notification, trigger: trigger)
         } catch {
             throw Error.sendNotificationFail(senderError: error)
         }

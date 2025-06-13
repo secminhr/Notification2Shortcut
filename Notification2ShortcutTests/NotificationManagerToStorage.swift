@@ -54,7 +54,7 @@ struct FailingStorage: NotificationStorage {
 }
 
 struct DumbSender: NotificationSender {
-    func sendNotification(id: String, notification: N2SNotification, trigger: UNNotificationTrigger) {
+    func sendNotification(notification: N2SNotification, trigger: UNNotificationTrigger) {
         // do nothing
     }
 }
@@ -98,16 +98,16 @@ struct NotificationManagerToStorage {
         #expect(emptyStorage.notifications["2"] == notification2)
     }
     
-    let predefinedStorage = InMemoryStorage([
-        "N1": N2SNotification("T1"),
-        "N2": N2SNotification("T2")
-    ])
-    
     @Test func restoreFromStorage() async throws {
+        let notifications = [
+            "N1": N2SNotification("T1"),
+            "N2": N2SNotification("T2")
+        ]
+        let predefinedStorage = InMemoryStorage(notifications)
         let manager = try await NotificationManager(storage: predefinedStorage, sender: DumbSender())
         
-        #expect(manager.getNotification(id: "N1") == N2SNotification("T1"))
-        #expect(manager.getNotification(id: "N2") == N2SNotification("T2"))
+        #expect(manager.getNotification(id: "N1") == notifications["N1"])
+        #expect(manager.getNotification(id: "N2") == notifications["N2"])
         #expect(manager.getNotification(id: "None") == nil)
     }
     

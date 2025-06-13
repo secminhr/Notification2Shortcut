@@ -18,10 +18,10 @@ fileprivate struct DumbStorage: NotificationStorage {
 }
 
 fileprivate class SuccessSender: NotificationSender {
-    var sentNotifications: [String: (N2SNotification, UNNotificationTrigger)] = [:]
+    var sentNotifications: [(N2SNotification, UNNotificationTrigger)] = []
     
-    func sendNotification(id: String, notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) {
-        sentNotifications[id] = (notification, trigger)
+    func sendNotification(notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) {
+        sentNotifications.append((notification, trigger))
     }
 }
 
@@ -29,14 +29,14 @@ fileprivate struct FailingSender: NotificationSender {
     enum Error: Swift.Error {
         case err
     }
-    func sendNotification(id: String, notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) async throws {
+    func sendNotification(notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) async throws {
         throw Error.err
     }
 }
 
 struct NotificationManagerToSender {
     @Test func sendNotification() async throws {
-        let notification = N2SNotification("Title")
+        let notification = N2SNotification("Title", notificationSendingId: "sendingId")
         
         let sender = SuccessSender()
         let manager = try await NotificationManager(storage: DumbStorage(), sender: sender)
@@ -45,10 +45,8 @@ struct NotificationManagerToSender {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         try await manager.sendNotification(id: "id", withTrigger: trigger)
         
-        try #require(sender.sentNotifications.contains {
-            $0.key == "id"
-        })
-        #expect(sender.sentNotifications["id"]! == (notification, trigger))
+        try #require(sender.sentNotifications.count == 1)
+        #expect(sender.sentNotifications[0] == (notification, trigger))
     }
     
     @Test func sendNotificationWhenNotExist() async throws {

@@ -8,5 +8,5 @@
 import UserNotifications
 
 protocol NotificationSender {
-    func sendNotification(id: String, notification: N2SNotification, trigger: UNNotificationTrigger) async throws
+    func sendNotification(notification: N2SNotification, trigger: UNNotificationTrigger) async throws
 }
