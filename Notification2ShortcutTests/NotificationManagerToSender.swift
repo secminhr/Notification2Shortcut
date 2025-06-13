@@ -30,11 +30,11 @@ struct NotificationManagerToSender {
         let notification = N2SNotification("Title")
         
         let sender = SuccessSender()
-        let notificationManager = await NotificationManager(storage: DumbStorage(), sender: sender)
-        await notificationManager.update(notification, id: "id")
+        let manager = await NotificationManager(storage: DumbStorage(), sender: sender)
+        await manager.update(notification, id: "id")
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
-        await notificationManager.sendNotification(id: "id", withTrigger: trigger)
+        await manager.sendNotification(id: "id", withTrigger: trigger)
         
         try #require(sender.sentNotifications.contains {
             $0.key == "id"

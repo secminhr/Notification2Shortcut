@@ -24,7 +24,7 @@ class InMemoryStorage: NotificationStorage {
 }
 
 struct DumbSender: NotificationSender {
-    func sendNotification(id: String, notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) {
+    func sendNotification(id: String, notification: N2SNotification, trigger: UNNotificationTrigger) {
         // do nothing
     }
 }
@@ -34,8 +34,8 @@ struct NotificationManagerToStorage {
     
     @Test func createNotifictionWithTitle() async throws {
         let notification = N2SNotification("Title")
-        let notificationManager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
-        await notificationManager.update(notification, id: "id")
+        let manager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
+        await manager.update(notification, id: "id")
         
         try #require(emptyStorage.notifications.count == 1)
         #expect(await emptyStorage.notifications["id"] == notification)
@@ -43,13 +43,13 @@ struct NotificationManagerToStorage {
     
     @Test func updateNotification() async throws {
         var notification = N2SNotification("Title")
-        let notificationManager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
-        await notificationManager.update(notification, id: "id")
+        let manager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
+        await manager.update(notification, id: "id")
         
         notification.title = "Updated Title"
         notification.body = "Updated Body"
         
-        await notificationManager.update(notification, id: "id")
+        await manager.update(notification, id: "id")
         
         try #require(emptyStorage.notifications.count == 1)
         #expect(await emptyStorage.notifications["id"] == notification)
