@@ -35,8 +35,16 @@ class NotificationManager {
         return notifications[id]
     }
     
-    func sendNotification(id: String, withTrigger trigger: UNNotificationTrigger) async {
-        await sender.sendNotification(id: id, notification: notifications[id]!, trigger: trigger)
+    func sendNotification(id: String, withTrigger trigger: UNNotificationTrigger) async throws {
+        guard let notification = getNotification(id: id) else {
+            throw Error.notificationNotExists
+        }
+        
+        do {
+            try await sender.sendNotification(id: id, notification: notification, trigger: trigger)
+        } catch {
+            throw Error.sendNotificationFail(senderError: error)
+        }
     }
 }
 
@@ -44,5 +52,7 @@ extension NotificationManager {
     nonisolated enum Error: Swift.Error {
         case initFail(storageError: Swift.Error)
         case updateFail(storageError: Swift.Error)
+        case notificationNotExists
+        case sendNotificationFail(senderError: Swift.Error)
     }
 }
