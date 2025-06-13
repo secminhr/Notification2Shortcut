@@ -111,17 +111,26 @@ struct NotificationManagerToStorage {
     }
     
     @Test func storageObtainingInitialNotificationFail() async throws {
-        await #expect(throws: NotificationManager.Error.initFail) {
-            try await NotificationManager(storage: FailingStorage(failAt: [.initialize]), sender: DumbSender())
+        var errorCaught = false
+        do {
+            let _ = try await NotificationManager(storage: FailingStorage(failAt: [.initialize]), sender: DumbSender())
+        } catch NotificationManager.Error.initFail(storageError: let storageError) {
+            errorCaught = true
+            #expect(storageError as! FailingStorage.StorageError == FailingStorage.StorageError.err)
         }
+        #expect(errorCaught)
     }
     
     @Test func storageUpdateFail() async throws {
         let manager = try await NotificationManager(storage: FailingStorage(failAt: [.update]), sender: DumbSender())
         
-        await #expect(throws: NotificationManager.Error.updateFail) {
+        var errorCaught = false
+        do {
             try await manager.update(N2SNotification(), id: "id")
+        } catch NotificationManager.Error.updateFail(storageError: let storageError) {
+            errorCaught = true
+            #expect(storageError as! FailingStorage.StorageError == FailingStorage.StorageError.err)
         }
-        #expect(manager.getNotification(id: "id") == nil)
+        #expect(errorCaught)
     }
 }

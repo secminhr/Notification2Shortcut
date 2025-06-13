@@ -18,7 +18,7 @@ class NotificationManager {
         do {
             self.notifications = try await storage.initNotifications
         } catch {
-            throw Error.initFail
+            throw Error.initFail(storageError: error)
         }
     }
     
@@ -27,7 +27,7 @@ class NotificationManager {
             try await storage.update(notification, id: id)
             notifications[id] = notification
         } catch {
-            throw Error.updateFail
+            throw Error.updateFail(storageError: error)
         }
     }
     
@@ -42,6 +42,7 @@ class NotificationManager {
 
 extension NotificationManager {
     nonisolated enum Error: Swift.Error {
-        case initFail, updateFail
+        case initFail(storageError: Swift.Error)
+        case updateFail(storageError: Swift.Error)
     }
 }
