@@ -30,8 +30,8 @@ struct NotificationManagerToSender {
         let notification = N2SNotification("Title")
         
         let sender = SuccessSender()
-        let manager = await NotificationManager(storage: DumbStorage(), sender: sender)
-        await manager.update(notification, id: "id")
+        let manager = try await NotificationManager(storage: DumbStorage(), sender: sender)
+        try await manager.update(notification, id: "id")
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         await manager.sendNotification(id: "id", withTrigger: trigger)
