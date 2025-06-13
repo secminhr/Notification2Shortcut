@@ -10,17 +10,16 @@ import UserNotifications
 @testable import Notification2Shortcut
 
 class InMemoryStorage: NotificationStorage {
-    private var notificationDict: [String: N2SNotification] = [:]
-    private var notificationIds: [String] = []
-    var notifications: [N2SNotification] {
-        return notificationIds.map { notificationDict[$0]! }
+    let initNotifications: [String : Notification2Shortcut.N2SNotification]
+    var notifications: [String: N2SNotification]
+    
+    init(_ notificatios: [String: N2SNotification] = [:]) {
+        self.initNotifications = notificatios
+        self.notifications = notificatios
     }
     
-    func update(_ notification: N2SNotification, id: String) {
-        notificationDict[id] = notification
-        if !notificationIds.contains(id) {
-            notificationIds.append(id)
-        }
+    func update(_ notification: N2SNotification, id: String) async {
+        notifications[id] = notification
     }
 }
 
@@ -31,42 +30,53 @@ struct DumbSender: NotificationSender {
 }
 
 struct NotificationManagerToStorage {
-    let storage = InMemoryStorage()
+    let emptyStorage = InMemoryStorage()
     
     @Test func createNotifictionWithTitle() async throws {
         let notification = N2SNotification("Title")
-        var notificationManager = NotificationManager(storage: storage, sender: DumbSender())
-        notificationManager.update(notification, id: "id")
+        let notificationManager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
+        await notificationManager.update(notification, id: "id")
         
-        try #require(storage.notifications.count == 1)
-        #expect(storage.notifications[0] == notification)
+        try #require(emptyStorage.notifications.count == 1)
+        #expect(await emptyStorage.notifications["id"] == notification)
     }
     
     @Test func updateNotification() async throws {
         var notification = N2SNotification("Title")
-        var notificationManager = NotificationManager(storage: storage, sender: DumbSender())
-        notificationManager.update(notification, id: "id")
+        let notificationManager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
+        await notificationManager.update(notification, id: "id")
         
         notification.title = "Updated Title"
         notification.body = "Updated Body"
         
-        notificationManager.update(notification, id: "id")
+        await notificationManager.update(notification, id: "id")
         
-        try #require(storage.notifications.count == 1)
-        #expect(storage.notifications[0] == notification)
+        try #require(emptyStorage.notifications.count == 1)
+        #expect(await emptyStorage.notifications["id"] == notification)
     }
     
     @Test func multipleNotifications() async throws {
         let notification1 = N2SNotification("T1")
         let notification2 = N2SNotification("T2")
         
-        var manager = NotificationManager(storage: storage, sender: DumbSender())
-        manager.update(notification1, id: "1")
-        manager.update(notification2, id: "2")
+        let manager = await NotificationManager(storage: emptyStorage, sender: DumbSender())
+        await manager.update(notification1, id: "1")
+        await manager.update(notification2, id: "2")
         
-        try #require(storage.notifications.count == 2)
-        #expect(storage.notifications[0] == notification1)
-        #expect(storage.notifications[1] == notification2)
+        try #require(emptyStorage.notifications.count == 2)
+        #expect(emptyStorage.notifications["1"] == notification1)
+        #expect(emptyStorage.notifications["2"] == notification2)
+    }
+    
+    let predefinedStorage = InMemoryStorage([
+        "N1": N2SNotification("T1"),
+        "N2": N2SNotification("T2")
+    ])
+    
+    @Test func restoreFromStorage() async throws {
+        let manager = await NotificationManager(storage: predefinedStorage, sender: DumbSender())
+        
+        #expect(manager.getNotification(id: "N1") == N2SNotification("T1"))
+        #expect(manager.getNotification(id: "N2") == N2SNotification("T2"))
     }
 }
-

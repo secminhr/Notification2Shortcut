@@ -7,22 +7,27 @@
 
 import UserNotifications
 
-struct NotificationManager {
+class NotificationManager {
     private var storage: NotificationStorage
     private let sender: NotificationSender
     
-    private var notifications: [String: N2SNotification] = [:]
-    init(storage: NotificationStorage, sender: NotificationSender) {
+    private var notifications: [String: N2SNotification]
+    init(storage: NotificationStorage, sender: NotificationSender) async {
         self.storage = storage
         self.sender = sender
+        self.notifications = await storage.initNotifications
     }
     
-    mutating func update(_ notification: N2SNotification, id: String) {
-        storage.update(notification, id: id)
+    func update(_ notification: N2SNotification, id: String) async {
         notifications[id] = notification
+        await storage.update(notification, id: id)
     }
     
-    func sendNotification(id: String, withTrigger trigger: UNNotificationTrigger) {
-        sender.sendNotification(id: id, notification: notifications[id]!, trigger: trigger)
+    func getNotification(id: String) -> N2SNotification? {
+        return notifications[id]
+    }
+    
+    func sendNotification(id: String, withTrigger trigger: UNNotificationTrigger) async {
+        await sender.sendNotification(id: id, notification: notifications[id]!, trigger: trigger)
     }
 }
