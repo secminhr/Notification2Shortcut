@@ -10,12 +10,12 @@ import UserNotifications
 @testable import Notification2Shortcut
 
 class InMemoryStorage: NotificationStorage {
-    let initNotifications: [String : Notification2Shortcut.N2SNotification]
+    let initNotifications: OrderedDictionary<String, N2SNotification>
     var notifications: [String: N2SNotification]
     
-    init(_ notificatios: [String: N2SNotification] = [:]) {
+    init(_ notificatios: OrderedDictionary<String, N2SNotification> = [:]) {
         self.initNotifications = notificatios
-        self.notifications = notificatios
+        self.notifications = notificatios.toDictionary()
     }
     
     func update(_ notification: N2SNotification, id: String) async {
@@ -36,7 +36,7 @@ struct FailingStorage: NotificationStorage {
         self.failAt = failAt
     }
     
-    var initNotifications: [String : Notification2Shortcut.N2SNotification] {
+    var initNotifications: OrderedDictionary<String, N2SNotification> {
         get async throws {
             if failAt.contains(.initialize) {
                 throw StorageError.err
@@ -46,7 +46,7 @@ struct FailingStorage: NotificationStorage {
         }
     }
     
-    func update(_ notification: Notification2Shortcut.N2SNotification, id: String) async throws {
+    func update(_ notification: N2SNotification, id: String) async throws {
         if failAt.contains(.update) {
             throw StorageError.err
         }
@@ -99,7 +99,7 @@ struct NotificationManagerToStorage {
     }
     
     @Test func restoreFromStorage() async throws {
-        let notifications = [
+        let notifications: OrderedDictionary<String, N2SNotification> = [
             "N1": N2SNotification("T1"),
             "N2": N2SNotification("T2")
         ]

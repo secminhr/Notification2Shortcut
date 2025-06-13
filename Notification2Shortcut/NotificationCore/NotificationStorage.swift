@@ -7,6 +7,6 @@
 
 protocol NotificationStorage {
     /// Notifications available when the NotificationStorage instance is initiated. ``update(_:id:)`` should not modify it, and the modification won't affect anything.
-    var initNotifications: [String: N2SNotification] { get async throws }
+    var initNotifications: OrderedDictionary<String, N2SNotification> { get async throws }
     mutating func update(_ notification: N2SNotification, id: String) async throws
 }

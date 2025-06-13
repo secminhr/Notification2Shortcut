@@ -9,13 +9,13 @@ import Foundation
 @preconcurrency import UserNotifications
 
 class UNSender: NotificationSender {
-    func sendNotification(id: String, notification: N2SNotification, trigger: UNNotificationTrigger) async throws {
+    func sendNotification(notification: N2SNotification, trigger: UNNotificationTrigger) async throws {
         let center = UNUserNotificationCenter.current()
         let authorized = try await center.requestAuthorization(options: [.badge, .alert, .sound])
         
         if authorized {
             let content = getNotificationContent(notification: notification)
-            let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+            let request = UNNotificationRequest(identifier: notification.notificationSendingId, content: content, trigger: trigger)
             
             // the request need to be sent from here (main actor) to non-isolated function center.add
             // we use @preconcurrency import UserNotifications to suppress the error since UNNotificationRequest is not Sendable

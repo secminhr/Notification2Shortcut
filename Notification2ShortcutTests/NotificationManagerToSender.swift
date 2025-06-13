@@ -9,15 +9,15 @@ import Testing
 @testable import Notification2Shortcut
 import UserNotifications
 
-fileprivate struct DumbStorage: NotificationStorage {
-    let initNotifications: [String : Notification2Shortcut.N2SNotification] = [:]
+struct DumbStorage: NotificationStorage {
+    let initNotifications: OrderedDictionary<String, N2SNotification> = [:]
     
     mutating func update(_ notification: Notification2Shortcut.N2SNotification, id: String) {
         // do nothing
     }
 }
 
-fileprivate class SuccessSender: NotificationSender {
+class SuccessSender: NotificationSender {
     var sentNotifications: [(N2SNotification, UNNotificationTrigger)] = []
     
     func sendNotification(notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) {
@@ -25,7 +25,7 @@ fileprivate class SuccessSender: NotificationSender {
     }
 }
 
-fileprivate struct FailingSender: NotificationSender {
+struct FailingSender: NotificationSender {
     enum Error: Swift.Error {
         case err
     }
