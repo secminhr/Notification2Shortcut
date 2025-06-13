@@ -17,8 +17,8 @@ struct NotificationManager {
         self.sender = sender
     }
     
-    mutating func add(_ notification: N2SNotification, id: String) {
-        storage.add(notification)
+    mutating func update(_ notification: N2SNotification, id: String) {
+        storage.update(notification, id: id)
         notifications[id] = notification
     }
     

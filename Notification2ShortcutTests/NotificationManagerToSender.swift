@@ -12,7 +12,7 @@ import UserNotifications
 fileprivate struct DumbStorage: NotificationStorage {
     var notifications: [Notification2Shortcut.N2SNotification] = []
     
-    mutating func add(_ notification: Notification2Shortcut.N2SNotification) {
+    mutating func update(_ notification: Notification2Shortcut.N2SNotification, id: String) {
         // do nothing
     }
 }
@@ -31,7 +31,7 @@ struct NotificationManagerToSender {
         
         let sender = SuccessSender()
         var notificationManager = NotificationManager(storage: DumbStorage(), sender: sender)
-        notificationManager.add(notification, id: "id")
+        notificationManager.update(notification, id: "id")
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         notificationManager.sendNotification(id: "id", withTrigger: trigger)

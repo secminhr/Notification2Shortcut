@@ -7,5 +7,5 @@
 
 protocol NotificationStorage {
     var notifications: [N2SNotification] { get }
-    mutating func add(_ notification: N2SNotification)
+    mutating func update(_ notification: N2SNotification, id: String)
 }
