@@ -108,6 +108,7 @@ struct NotificationManagerToStorage {
         
         #expect(manager.getNotification(id: "N1") == N2SNotification("T1"))
         #expect(manager.getNotification(id: "N2") == N2SNotification("T2"))
+        #expect(manager.getNotification(id: "None") == nil)
     }
     
     @Test func storageObtainingInitialNotificationFail() async throws {
@@ -132,5 +133,6 @@ struct NotificationManagerToStorage {
             #expect(storageError as! FailingStorage.StorageError == FailingStorage.StorageError.err)
         }
         #expect(errorCaught)
+        #expect(manager.getNotification(id: "id") == nil)
     }
 }
