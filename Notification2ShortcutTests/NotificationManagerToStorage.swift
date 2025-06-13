@@ -55,5 +55,18 @@ struct NotificationManagerToStorage {
         try #require(storage.notifications.count == 1)
         #expect(storage.notifications[0] == notification)
     }
+    
+    @Test func multipleNotifications() async throws {
+        let notification1 = N2SNotification("T1")
+        let notification2 = N2SNotification("T2")
+        
+        var manager = NotificationManager(storage: storage, sender: DumbSender())
+        manager.update(notification1, id: "1")
+        manager.update(notification2, id: "2")
+        
+        try #require(storage.notifications.count == 2)
+        #expect(storage.notifications[0] == notification1)
+        #expect(storage.notifications[1] == notification2)
+    }
 }
 
