@@ -32,12 +32,22 @@ struct NotificationViewModelTest {
     @Test func changeSelection() async throws {
         let notification = N2SNotification(id: "1")
         let manager = try await NotificationManager(storage: InMemoryStorage([notification]), sender: DumbSender())
-        var viewModel = NotificationsViewModel(notificationManager: manager)
+        let viewModel = NotificationsViewModel(notificationManager: manager)
         #expect(viewModel.selectedNotification == nil)
         
         viewModel.selectedId = "1"
         #expect(viewModel.selectedNotification == notification)
     }
     
-    // TODO: newNotification is not tested. I'll first see if it works in actual app
+    @Test func newNotification() async throws {
+        let manager = try await NotificationManager(storage: DumbStorage(), sender: DumbSender())
+        let viewModel = NotificationsViewModel(notificationManager: manager)
+        
+        try await viewModel.newNotification()
+        try #require(viewModel.notifications.count == 1)
+        try await viewModel.newNotification()
+        
+        try #require(viewModel.notifications.count == 2)
+        #expect(viewModel.selectedNotification == viewModel.notifications[1])
+    }
 }

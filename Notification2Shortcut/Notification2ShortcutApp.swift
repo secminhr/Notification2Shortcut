@@ -31,7 +31,7 @@ struct Notification2ShortcutApp: App {
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            NotificationModel.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -42,15 +42,34 @@ struct Notification2ShortcutApp: App {
         }
     }()
 
-    @State var viewModel: NotificationsViewModel? = nil
+    
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: viewModel)
-                .task {
-                    let manager = try! await NotificationManager(storage: InMemoryStorage(), sender: UNSender())
-                    viewModel = NotificationsViewModel(notificationManager: manager)
-                }
+            ViewModelHolder()
         }
         .modelContainer(sharedModelContainer)
+    }
+}
+
+struct ViewModelHolder: View {
+    @Environment(\.modelContext) private var context: ModelContext
+    @State var viewModel: NotificationsViewModel? = nil
+    @State var errorDuringLoading: Bool = false
+    
+    var body: some View {
+        if !errorDuringLoading {
+            ContentView(viewModel: viewModel)
+                .task {
+                    do {
+                        let storage = try SwiftDataStorage(modelContext: context)
+                        let manager = try await NotificationManager(storage: storage, sender: UNSender())
+                        viewModel = NotificationsViewModel(notificationManager: manager)
+                    } catch {
+                        errorDuringLoading = true
+                    }
+                }
+        } else {
+            Text("Error while loading data...")
+        }
     }
 }

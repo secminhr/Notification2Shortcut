@@ -31,7 +31,9 @@ class NotificationsViewModel {
     func newNotification() async throws {
         let notification = N2SNotification(notificationSendingId: "notify", id: UUID().uuidString)
         try await notificationManager.update(notification)
-        notifications.append(notification)
+        
+        notifications = notificationManager.notifications
+        selectedId = notification.id
     }
 }
 
