@@ -35,7 +35,7 @@ struct NotificationViewModelTest {
         var viewModel = NotificationsViewModel(notificationManager: manager)
         #expect(viewModel.selectedNotification == nil)
         
-        viewModel.selectedIndex = 0
+        viewModel.selectedId = "1"
         #expect(viewModel.selectedNotification == notification)
     }
     
