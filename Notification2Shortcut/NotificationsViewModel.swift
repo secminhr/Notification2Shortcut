@@ -7,8 +7,10 @@
 
 import Foundation
 import OrderedCollections
+import SwiftUI
 
-struct NotificationsViewModel {
+@Observable
+class NotificationsViewModel {
     // we use a stored property rather than computed property via notificationManager.notificationIds
     // since NotificationManager is not observable
     private(set) var notifications: [N2SNotification]
@@ -26,9 +28,8 @@ struct NotificationsViewModel {
         notifications = notificationManager.notifications
     }
     
-    mutating func newNotification() async throws {
-        let notification = N2SNotification(notificationSendingId: "notify")
-        let id = UUID().uuidString
+    func newNotification() async throws {
+        let notification = N2SNotification(notificationSendingId: "notify", id: UUID().uuidString)
         try await notificationManager.update(notification)
         notifications.append(notification)
     }
