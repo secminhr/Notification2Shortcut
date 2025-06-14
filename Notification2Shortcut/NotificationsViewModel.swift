@@ -11,7 +11,7 @@ import OrderedCollections
 struct NotificationsViewModel {
     // we use a stored property rather than computed property via notificationManager.notificationIds
     // since NotificationManager is not observable
-    private(set) var notificationIds: OrderedSet<String>
+    private(set) var notifications: [N2SNotification]
     var selectedId: String? = nil
     
     var selectedNotification: N2SNotification? {
@@ -23,14 +23,14 @@ struct NotificationsViewModel {
     private let notificationManager: NotificationManager
     init(notificationManager: NotificationManager) {
         self.notificationManager = notificationManager
-        notificationIds = notificationManager.notificationIds
+        notifications = notificationManager.notifications
     }
     
     mutating func newNotification() async throws {
         let notification = N2SNotification(notificationSendingId: "notify")
         let id = UUID().uuidString
-        try await notificationManager.update(notification, id: id)
-        notificationIds.append(id)
+        try await notificationManager.update(notification)
+        notifications.append(notification)
     }
 }
 

@@ -12,30 +12,35 @@ class NotificationManager {
     private var storage: NotificationStorage
     private let sender: NotificationSender
     
-    private var notifications: OrderedDictionary<String, N2SNotification>
-    public var notificationIds: OrderedSet<String> { notifications.keys }
+    // for quick indexing
+    private var notificationsDict: OrderedDictionary<String, N2SNotification>
+    var notifications: [N2SNotification] {
+        notificationsDict.values.elements
+    }
     
     init(storage: NotificationStorage, sender: NotificationSender) async throws {
         self.storage = storage
         self.sender = sender
         do {
-            self.notifications = try await storage.initNotifications
+            self.notificationsDict = try await storage.initNotifications.reduce(into: [:]) { dict, notification in
+                dict[notification.id] = notification
+            }
         } catch {
             throw Error.initFail(storageError: error)
         }
     }
     
-    func update(_ notification: N2SNotification, id: String) async throws {
+    func update(_ notification: N2SNotification) async throws {
         do {
-            try await storage.update(notification, id: id)
-            notifications[id] = notification
+            try await storage.update(notification)
+            notificationsDict[notification.id] = notification
         } catch {
             throw Error.updateFail(storageError: error)
         }
     }
     
     func getNotification(id: String) -> N2SNotification? {
-        return notifications[id]
+        return notificationsDict[id]
     }
     
     func sendNotification(id: String, withTrigger trigger: UNNotificationTrigger) async throws {

@@ -11,9 +11,9 @@ import UserNotifications
 import OrderedCollections
 
 struct DumbStorage: NotificationStorage {
-    let initNotifications: OrderedDictionary<String, N2SNotification> = [:]
+    let initNotifications: [N2SNotification] = []
     
-    mutating func update(_ notification: Notification2Shortcut.N2SNotification, id: String) {
+    mutating func update(_ notification: N2SNotification) {
         // do nothing
     }
 }
@@ -21,7 +21,7 @@ struct DumbStorage: NotificationStorage {
 class SuccessSender: NotificationSender {
     var sentNotifications: [(N2SNotification, UNNotificationTrigger)] = []
     
-    func sendNotification(notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) {
+    func sendNotification(notification: N2SNotification, trigger: UNNotificationTrigger) {
         sentNotifications.append((notification, trigger))
     }
 }
@@ -30,18 +30,18 @@ struct FailingSender: NotificationSender {
     enum Error: Swift.Error {
         case err
     }
-    func sendNotification(notification: Notification2Shortcut.N2SNotification, trigger: UNNotificationTrigger) async throws {
+    func sendNotification(notification: N2SNotification, trigger: UNNotificationTrigger) async throws {
         throw Error.err
     }
 }
 
 struct NotificationManagerToSender {
     @Test func sendNotification() async throws {
-        let notification = N2SNotification("Title", notificationSendingId: "sendingId")
+        let notification = N2SNotification("Title", notificationSendingId: "sendingId", id: "id")
         
         let sender = SuccessSender()
         let manager = try await NotificationManager(storage: DumbStorage(), sender: sender)
-        try await manager.update(notification, id: "id")
+        try await manager.update(notification)
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         try await manager.sendNotification(id: "id", withTrigger: trigger)
@@ -68,7 +68,7 @@ struct NotificationManagerToSender {
     @Test func SenderFails() async throws {
         let sender = FailingSender()
         let manager = try await NotificationManager(storage: DumbStorage(), sender: sender)
-        try await manager.update(N2SNotification(), id: "id")
+        try await manager.update(N2SNotification(id: "id"))
         
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)

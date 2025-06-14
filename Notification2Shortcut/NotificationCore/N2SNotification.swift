@@ -29,20 +29,19 @@ struct NonEmpty {
     }
 }
 
-struct N2SNotification: Equatable {
+struct N2SNotification: Equatable, Identifiable {
     static func == (lhs: N2SNotification, rhs: N2SNotification) -> Bool {
-        return  lhs.notificationSendingId == rhs.notificationSendingId &&
-                lhs.title == rhs.title &&
-                lhs.subtitle == rhs.subtitle &&
-                lhs.body == rhs.body
+        return lhs.id == rhs.id
     }
     
+    let id: String
     var notificationSendingId: String
     @NonEmpty(defaultValue: "Title") var title: String
     var subtitle: String? = nil
     var body: String? = nil
     
-    init(_ title: String = "", notificationSendingId: String = UUID().uuidString) {
+    init(_ title: String = "", notificationSendingId: String = UUID().uuidString, id: String = UUID().uuidString) {
+        self.id = id
         self.notificationSendingId = notificationSendingId
         self.title = title
     }

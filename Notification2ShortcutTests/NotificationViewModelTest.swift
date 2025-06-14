@@ -12,26 +12,26 @@ import OrderedCollections
 struct NotificationViewModelTest {
 
     @Test func initializeNotifications() async throws {
-        let existingNotifications: OrderedDictionary<String, N2SNotification> = [
-            "1": N2SNotification(),
-            "2": N2SNotification(),
+        let existingNotifications: [N2SNotification] = [
+            N2SNotification(id: "1"),
+            N2SNotification(id: "2"),
         ]
         let manager = try await NotificationManager(storage: InMemoryStorage(existingNotifications), sender: DumbSender())
         
         let viewModel = NotificationsViewModel(notificationManager: manager)
-        #expect(viewModel.notificationIds == ["1", "2"])
+        #expect(viewModel.notifications == existingNotifications)
     }
     
     @Test func initWithEmptyStorage() async throws {
         let manager = try await NotificationManager(storage: DumbStorage(), sender: DumbSender())
         
         let viewModel = NotificationsViewModel(notificationManager: manager)
-        #expect(viewModel.notificationIds == [])
+        #expect(viewModel.notifications == [])
     }
     
     @Test func changeSelection() async throws {
-        let notification = N2SNotification()
-        let manager = try await NotificationManager(storage: InMemoryStorage(["1": notification]), sender: DumbSender())
+        let notification = N2SNotification(id: "1")
+        let manager = try await NotificationManager(storage: InMemoryStorage([notification]), sender: DumbSender())
         var viewModel = NotificationsViewModel(notificationManager: manager)
         #expect(viewModel.selectedNotification == nil)
         
