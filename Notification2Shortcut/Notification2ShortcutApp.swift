@@ -8,23 +8,6 @@
 import SwiftUI
 import SwiftData
 
-private class InMemoryStorage: NotificationStorage {
-    let initNotifications: [N2SNotification]
-    var notifications: [String: N2SNotification]
-    
-    init(_ notifications: [N2SNotification] = []) {
-        self.initNotifications = notifications
-        self.notifications = [:]
-        for notification in notifications {
-            self.notifications[notification.id] = notification
-        }
-    }
-    
-    func update(_ notification: N2SNotification) async {
-        notifications[notification.id] = notification
-    }
-}
-
 @main
 struct Notification2ShortcutApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
