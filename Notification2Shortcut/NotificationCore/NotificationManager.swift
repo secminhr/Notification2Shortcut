@@ -6,13 +6,14 @@
 //
 
 import UserNotifications
+import OrderedCollections
 
 class NotificationManager {
     private var storage: NotificationStorage
     private let sender: NotificationSender
     
     private var notifications: OrderedDictionary<String, N2SNotification>
-    public var notificationIds: [String] { notifications.keys }
+    public var notificationIds: OrderedSet<String> { notifications.keys }
     
     init(storage: NotificationStorage, sender: NotificationSender) async throws {
         self.storage = storage

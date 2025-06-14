@@ -8,6 +8,7 @@
 import Testing
 @testable import Notification2Shortcut
 import UserNotifications
+import OrderedCollections
 
 struct DumbStorage: NotificationStorage {
     let initNotifications: OrderedDictionary<String, N2SNotification> = [:]

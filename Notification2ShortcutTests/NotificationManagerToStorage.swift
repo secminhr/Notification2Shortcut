@@ -7,7 +7,9 @@
 
 import Testing
 import UserNotifications
+import OrderedCollections
 @testable import Notification2Shortcut
+
 
 class InMemoryStorage: NotificationStorage {
     let initNotifications: OrderedDictionary<String, N2SNotification>
@@ -20,6 +22,16 @@ class InMemoryStorage: NotificationStorage {
     
     func update(_ notification: N2SNotification, id: String) async {
         notifications[id] = notification
+    }
+}
+
+extension OrderedDictionary {
+    func toDictionary() -> [Key: Value] {
+        var result: [Key: Value] = [:]
+        for (k, v) in self {
+            result[k] = v
+        }
+        return result
     }
 }
 

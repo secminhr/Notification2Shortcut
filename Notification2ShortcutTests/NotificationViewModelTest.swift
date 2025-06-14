@@ -6,6 +6,7 @@
 //
 
 import Testing
+import OrderedCollections
 @testable import Notification2Shortcut
 
 struct NotificationViewModelTest {

@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import OrderedCollections
 
 struct NotificationsViewModel {
     // we use a stored property rather than computed property via notificationManager.notificationIds
     // since NotificationManager is not observable
-    private(set) var notificationIds: [String]
+    private(set) var notificationIds: OrderedSet<String>
     var selectedIndex: Int? = nil
     
     var selectedNotification: N2SNotification? {
