@@ -12,6 +12,7 @@ import UserNotifications
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var viewModel: NotificationsViewModel
+    @State var newNotificationFailed: Bool = false
     
     var body: some View {
         NavigationSplitView {
@@ -24,17 +25,25 @@ struct MainView: View {
             if let notification = viewModel.selectedNotification {
                 NotificationEditor(notification)
             } else {
-                Text("Select a notification")
+                Text("Create or select a notification")
             }
         }
         .toolbar {
             ToolbarItem {
                 Button("New", systemImage: "plus") {
                     Task {
-                        try? await viewModel.newNotification()
+                        do {
+                            try await viewModel.newNotification()
+                        } catch {
+                            newNotificationFailed = true
+                        }
                     }
                 }
                 .labelStyle(.iconOnly)
+                .popover(isPresented: $newNotificationFailed) {
+                    Text("Creating new notification failed.")
+                        .padding(.all)
+                }
             }
         }
     }
@@ -70,6 +79,27 @@ struct ConstStorage: NotificationStorage {
 #Preview("no notifications") {
     AsyncThrowsLoadingView {
         let manager = try! await NotificationManager(storage: ConstStorage([]), sender: UNSender())
+        return NotificationsViewModel(notificationManager: manager)
+    } resultView: { viewModel in
+            MainView(viewModel: viewModel)
+    } errorView: { error in
+            Text("Error")
+    }
+}
+
+struct FailingStorage: NotificationStorage {
+    enum StorageError: Error {
+        case err
+    }
+    var initNotifications: [N2SNotification] = []
+    
+    mutating func update(_ notification: N2SNotification) async throws {
+        throw StorageError.err
+    }
+}
+#Preview("new notification fail") {
+    AsyncThrowsLoadingView {
+        let manager = try! await NotificationManager(storage: FailingStorage(), sender: UNSender())
         return NotificationsViewModel(notificationManager: manager)
     } resultView: { viewModel in
             MainView(viewModel: viewModel)
