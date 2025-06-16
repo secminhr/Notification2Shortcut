@@ -6,6 +6,7 @@
 //
 
 import Testing
+@testable import Notification2Shortcut
 
 struct AsyncThrowsLoadingTest {
     

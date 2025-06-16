@@ -58,30 +58,9 @@
 		4F7DAE492DFDE00700CDDFB3 /* N2SPredicates.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = N2SPredicates.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4F7DAE8B2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2Shortcut" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ViewModel/AsyncThrowsLoadingViewModel.swift,
-			);
-			target = 4F71A3CB2DF9E9C0004C600C /* Notification2Shortcut */;
-		};
-		4F7DAE8C2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2ShortcutTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ViewModel/AsyncThrowsLoadingViewModel.swift,
-			);
-			target = 4F71A3DA2DF9E9C1004C600C /* Notification2ShortcutTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4F71A3CE2DF9E9C0004C600C /* Notification2Shortcut */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				4F7DAE8B2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2Shortcut" target */,
-				4F7DAE8C2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2ShortcutTests" target */,
-			);
 			path = Notification2Shortcut;
 			sourceTree = "<group>";
 		};
