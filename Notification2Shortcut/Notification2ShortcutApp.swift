@@ -28,7 +28,7 @@ struct Notification2ShortcutApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ViewModelHolder()
+            NotificationsViewModelHolder()
         }
         .modelContainer(sharedModelContainer)
     }

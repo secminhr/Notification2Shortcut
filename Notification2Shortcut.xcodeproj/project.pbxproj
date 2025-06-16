@@ -62,14 +62,14 @@
 		4F7DAE8B2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2Shortcut" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AsyncThrowsLoadingViewModel.swift,
+				ViewModel/AsyncThrowsLoadingViewModel.swift,
 			);
 			target = 4F71A3CB2DF9E9C0004C600C /* Notification2Shortcut */;
 		};
 		4F7DAE8C2DFFBD1A00CDDFB3 /* Exceptions for "Notification2Shortcut" folder in "Notification2ShortcutTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AsyncThrowsLoadingViewModel.swift,
+				ViewModel/AsyncThrowsLoadingViewModel.swift,
 			);
 			target = 4F71A3DA2DF9E9C1004C600C /* Notification2ShortcutTests */;
 		};

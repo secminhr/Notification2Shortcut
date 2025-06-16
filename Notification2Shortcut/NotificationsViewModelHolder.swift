@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ViewModelHolder: View {
+struct NotificationsViewModelHolder: View {
     @Environment(\.modelContext) private var context: ModelContext
     @State var viewModel: NotificationsViewModel? = nil
     @State var errorDuringLoading: Bool = false
