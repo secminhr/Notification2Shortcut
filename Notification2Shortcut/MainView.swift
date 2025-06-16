@@ -22,7 +22,7 @@ struct MainView: View {
             }
         } detail: {
             if let notification = viewModel.selectedNotification {
-                Text(notification.title)
+                NotificationEditor(notification)
             } else {
                 Text("Select a notification")
             }
