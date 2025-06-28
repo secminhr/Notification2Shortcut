@@ -22,7 +22,7 @@ class NotificationsViewModel {
         return notificationManager.getNotification(id: id)
     }
     
-    private let notificationManager: NotificationManager
+    let notificationManager: NotificationManager
     init(notificationManager: NotificationManager) {
         self.notificationManager = notificationManager
         notifications = notificationManager.notifications

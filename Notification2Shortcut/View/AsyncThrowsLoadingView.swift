@@ -37,6 +37,13 @@ struct AsyncThrowsLoadingView<R, E: Error, ResultView: View, ErrorView: View>: V
     }
 }
 
+extension AsyncThrowsLoadingView where E == Never, ErrorView == EmptyView {
+    init(task: @escaping () async throws(Never) -> R,
+         @ViewBuilder resultView: @escaping (R) -> ResultView) {
+        self.init(task: task, resultView: resultView) { _ in }
+    }
+}
+
 #Preview("success") {
     AsyncThrowsLoadingView { () async throws(Never) -> String in
         "Hello"
