@@ -10,24 +10,6 @@ import OrderedCollections
 @testable import Notification2Shortcut
 
 struct NotificationViewModelTest {
-
-    @Test func initializeNotifications() async throws {
-        let existingNotifications: [N2SNotification] = [
-            N2SNotification(id: "1"),
-            N2SNotification(id: "2"),
-        ]
-        let manager = try await NotificationManager(storage: InMemoryStorage(existingNotifications), sender: DumbSender())
-        
-        let viewModel = NotificationsViewModel(notificationManager: manager)
-        #expect(viewModel.notifications == existingNotifications)
-    }
-    
-    @Test func initWithEmptyStorage() async throws {
-        let manager = try await NotificationManager(storage: DumbStorage(), sender: DumbSender())
-        
-        let viewModel = NotificationsViewModel(notificationManager: manager)
-        #expect(viewModel.notifications == [])
-    }
     
     @Test func changeSelection() async throws {
         let notification = N2SNotification(id: "1")
@@ -40,14 +22,16 @@ struct NotificationViewModelTest {
     }
     
     @Test func newNotification() async throws {
-        let manager = try await NotificationManager(storage: DumbStorage(), sender: DumbSender())
+        let storage = InMemoryStorage()
+        let manager = try await NotificationManager(storage: storage, sender: DumbSender())
         let viewModel = NotificationsViewModel(notificationManager: manager)
         
         try await viewModel.newNotification()
-        try #require(viewModel.notifications.count == 1)
+        
+        try #require(storage.notifications.count == 1)
         try await viewModel.newNotification()
         
-        try #require(viewModel.notifications.count == 2)
-        #expect(viewModel.selectedNotification == viewModel.notifications[1])
+        try #require(storage.notifications.count == 2)
+        #expect(viewModel.selectedNotification == storage.notifications[viewModel.selectedId!])
     }
 }

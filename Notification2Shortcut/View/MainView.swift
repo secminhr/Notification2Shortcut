@@ -14,10 +14,12 @@ struct MainView: View {
     @Bindable var viewModel: NotificationsViewModel
     @State var newNotificationFailed: Bool = false
     
+    @Query var notifications: [NotificationModel]
+    
     var body: some View {
         NavigationSplitView {
-            List(viewModel.notifications, selection: $viewModel.selectedId) { notification in
-                NavigationLink(value: notification.id) {
+            List(notifications, selection: $viewModel.selectedId) { notification in
+                NavigationLink(value: notification.notificationId) {
                     Text(notification.title)
                 }
             }
@@ -69,9 +71,20 @@ struct ConstStorage: NotificationStorage {
 #Preview {
     AsyncThrowsLoadingView {
         let manager = try! await NotificationManager(storage: ConstStorage(), sender: UNSender())
-        return NotificationsViewModel(notificationManager: manager)
-    } resultView: { viewModel in
+        let viewModel = NotificationsViewModel(notificationManager: manager)
+        
+        let container = try! ModelContainer(for: NotificationModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        container.mainContext.insert(NotificationModel(notificationId: "1", notificationSendingId: "1", title: "Title1", subtitle: "Subtitle1", body: "body1"))
+        try! container.mainContext.save()
+        container.mainContext.insert(NotificationModel(notificationId: "2", notificationSendingId: "2", title: "Title2", subtitle: "Subtitle2", body: "body2"))
+        try! container.mainContext.save()
+        container.mainContext.insert(NotificationModel(notificationId: "3", notificationSendingId: "3", title: "Title3", subtitle: "Subtitle3", body: "body3"))
+        try! container.mainContext.save()
+        
+        return (viewModel, container)
+    } resultView: { (viewModel, container) in
             MainView(viewModel: viewModel)
+            .modelContainer(container)
     } errorView: { error in
             Text("Error")
     }
@@ -83,6 +96,7 @@ struct ConstStorage: NotificationStorage {
         return NotificationsViewModel(notificationManager: manager)
     } resultView: { viewModel in
             MainView(viewModel: viewModel)
+            .modelContainer(for: NotificationModel.self, inMemory: true)
     } errorView: { error in
             Text("Error")
     }
@@ -104,6 +118,7 @@ struct FailingStorage: NotificationStorage {
         return NotificationsViewModel(notificationManager: manager)
     } resultView: { viewModel in
             MainView(viewModel: viewModel)
+            .modelContainer(for: NotificationModel.self, inMemory: true)
     } errorView: { error in
             Text("Error")
     }
