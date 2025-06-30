@@ -45,6 +45,36 @@ class FailUpdateMockManager: MockManager {
 
 struct NotificationEditorViewModelTest {
     
+    @Test func testNotEditing() async throws {
+        let manager = await MockManager()
+        let viewModel = NotificationEditorViewModel(manager)
+        
+        try #require(!viewModel.isEditing)
+        
+        viewModel.title = "aabbcc"
+        #expect(manager.updateArguments.isEmpty)
+    }
+    
+    @Test func testSetEditing() async throws {
+        let manager = await MockManager()
+        let notification = N2SNotification()
+        let viewModel = NotificationEditorViewModel(manager)
+        
+        async let result = viewModel.$saveError
+            .dropFirst() // drop init value
+            .async()
+        try await Task.sleep(nanoseconds: 100)
+        
+        viewModel.setEditing(notification: notification)
+        try #require(viewModel.isEditing)
+        
+        viewModel.title = "Title1"
+        #expect(await result == false)
+        try #require(manager.updateArguments.count == 1)
+        #expect(manager.updateArguments[0].title == "Title1")
+    }
+    
+    
     @Test func testEdit() async throws {
         let manager = await MockManager()
         let notification = N2SNotification()
@@ -85,9 +115,9 @@ struct NotificationEditorViewModelTest {
     }
     
     @Test func testFailureRetry() async throws {
-        let manager = await FailUpdateMockManager(times: 3)
+        let manager = await FailUpdateMockManager(times: 5)
         let notification = N2SNotification()
-        let viewModel = NotificationEditorViewModel(manager, editing: notification, retrySave: 4)
+        let viewModel = NotificationEditorViewModel(manager, editing: notification, retrySave: 6)
         
         async let error = viewModel.$saveError
             .dropFirst()
@@ -96,7 +126,7 @@ struct NotificationEditorViewModelTest {
         
         viewModel.title = "Edit"
         #expect(await error == false)
-        try #require(manager.updateArguments.count == 4)
+        try #require(manager.updateArguments.count == 6)
         #expect(manager.updateArguments[0].title == "Edit")
         #expect(manager.updateArguments[0].id == notification.id)
         #expect(manager.updateArguments[1].title == "Edit")

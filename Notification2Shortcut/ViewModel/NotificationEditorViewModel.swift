@@ -11,28 +11,29 @@ import Combine
 class NotificationEditorViewModel: ObservableObject {
     private let manager: NotificationManager
     
-    private let notificationId: String
-    @Published var title: String
-    @Published var subtitle: String
-    @Published var body: String
-    @Published var sendingId: String
+    private var notificationId: String? = nil
+    
+    var isEditing: Bool { notificationId != nil }
+    @Published var title: String = ""
+    @Published var subtitle: String = ""
+    @Published var body: String = ""
+    @Published var sendingId: String = ""
     @Published private(set) var saveError: Bool = false
     
     init(_ manager: NotificationManager,
-         editing notification: N2SNotification,
+         editing notification: N2SNotification? = nil,
          retrySave: Int = 3
     ) {
         self.manager = manager
-        self.notificationId = notification.id
-        self.title = notification.title
-        self.subtitle = notification.subtitle ?? ""
-        self.body = notification.body ?? ""
-        self.sendingId = notification.notificationSendingId
+        if let notification = notification {
+            setEditing(notification: notification)
+        }
         
         $title.combineLatest($subtitle, $body, $sendingId)
-            .dropFirst() // drop init value
+            .dropFirst()
+            .filter { _ in self.isEditing }
             .asyncTryMap(retry: retrySave) { (title, subtitle, body, sendingId) in
-                var notification = N2SNotification(title, id: self.notificationId)
+                var notification = N2SNotification(title, id: self.notificationId!)
                 notification.subtitle = subtitle
                 notification.body = body
                 notification.notificationSendingId = sendingId
@@ -42,6 +43,15 @@ class NotificationEditorViewModel: ObservableObject {
             .replaceError(with: true)
             .receive(on: RunLoop.main)
             .assign(to: &$saveError)
+    }
+    
+    func setEditing(notification: N2SNotification) {
+        self.notificationId = nil  // remove old first, otherwise the modifications below will be seen as edit
+        self.title = notification.title
+        self.subtitle = notification.subtitle ?? ""
+        self.body = notification.body ?? ""
+        self.sendingId = notification.notificationSendingId
+        self.notificationId = notification.id  // assign notificationId last to start editing mode
     }
 }
 
