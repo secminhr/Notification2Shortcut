@@ -22,46 +22,53 @@ struct NotificationEditor: View {
             let totalWidth = min(geometry.size.width, 480) // 我們仍維持最大寬度
             let iconWidth = totalWidth / 9
 
-            HStack(alignment: .center, spacing: 12) {
-                Image(systemName: "bell.fill")
-                    .resizable()
-                    .aspectRatio(1, contentMode: .fit)
-                    .frame(width: iconWidth, height: iconWidth)
-                    .clipShape(RoundedRectangle(cornerRadius: iconWidth * 0.2, style: .continuous))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(alignment: .firstTextBaseline) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            ClickEditableText(text: $viewModel.title)
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(.primary)
-                            ClickEditableText(text: $viewModel.subtitle, prompt: "subtitle")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(.primary)
-                        }
-
-                        Spacer()
-
-                        Text("now")
-                            .font(.system(size: 13))
-                            .foregroundStyle(.secondary)
-                    }
-
+            VStack(alignment: .center) {
+                Spacer()
+                HStack(alignment: .center, spacing: 12) {
+                    Image(systemName: "bell.fill")
+                        .resizable()
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: iconWidth, height: iconWidth)
+                        .clipShape(RoundedRectangle(cornerRadius: iconWidth * 0.2, style: .continuous))
                     
-                    ClickEditableText(text: $viewModel.body, prompt: "body")
-                        .font(.system(size: 15))
-                        .lineLimit(3)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                ClickEditableText(text: $viewModel.title)
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                                ClickEditableText(text: $viewModel.subtitle, prompt: "subtitle")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("now")
+                                .font(.system(size: 13))
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        
+                        ClickEditableText(text: $viewModel.body, prompt: "body")
+                            .font(.system(size: 15))
+                            .lineLimit(3)
+                    }
                 }
+                .padding(16)
+                .frame(width: totalWidth, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .shadow(radius: 8)
+                Button("Send", systemImage: "paperplane", role: .cancel) {
+                    
+                }
+                .foregroundStyle(.blue)
+                Spacer()
             }
-            .padding(16)
-            .frame(width: totalWidth, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(.ultraThinMaterial)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .shadow(radius: 8)
-            .position(CGPoint(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY))
         }
         .frame(maxWidth: 480, minHeight: 80)
         .onAppear {

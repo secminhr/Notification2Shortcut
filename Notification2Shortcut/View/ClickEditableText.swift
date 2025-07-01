@@ -27,7 +27,7 @@ struct ClickEditableText: View {
         } else {
             if text.isEmpty, let prompt = prompt {
                 Text(prompt)
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.gray.opacity(0.5))
                     .onTapGesture {
                         editing = true
                     }
