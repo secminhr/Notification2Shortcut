@@ -17,6 +17,8 @@ struct NotificationEditor: View {
         currentEditing = notification
     }
     
+    @State private var editingTitle = false
+    
     var body: some View {
         GeometryReader { geometry in
             let totalWidth = min(geometry.size.width, 480) // 我們仍維持最大寬度
@@ -32,10 +34,21 @@ struct NotificationEditor: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(alignment: .firstTextBaseline) {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(viewModel.title)
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(.primary)
-
+                            if editingTitle {
+                                TextField(text: $viewModel.title) {
+                                    
+                                }
+                                .onSubmit {
+                                    editingTitle = false
+                                }
+                            } else {
+                                Text(viewModel.title)
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                                    .onTapGesture {
+                                        editingTitle = true
+                                    }
+                            }
                             Text(viewModel.subtitle)
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundStyle(.primary)

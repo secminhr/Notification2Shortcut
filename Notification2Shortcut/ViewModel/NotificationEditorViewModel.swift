@@ -38,6 +38,8 @@ class NotificationEditorViewModel: ObservableObject {
                 notification.body = body
                 notification.notificationSendingId = sendingId
                 try await manager.update(notification)
+                
+                self.setEditing(notification: notification)
                 return false
             }
             .replaceError(with: true)

@@ -99,6 +99,24 @@ struct NotificationEditorViewModelTest {
         #expect(manager.updateArguments[3].notificationSendingId == "sid")
     }
     
+    @Test func testSetTitleToEmpty() async throws {
+        let manager = await MockManager()
+        let notification = N2SNotification("Title11")
+        let viewModel = NotificationEditorViewModel(manager, editing: notification)
+        
+        async let result = viewModel.$saveError
+            .dropFirst()
+            .async()
+        try await Task.sleep(nanoseconds: 100)
+        
+        viewModel.title = ""
+        
+        #expect(await result == false)
+        try #require(manager.updateArguments.count == 1)
+        #expect(manager.updateArguments[0].title == "Title")
+        #expect(viewModel.title == "Title")
+    }
+    
     @Test func testEditFailure() async throws {
         let manager = await FailUpdateMockManager(times: 10)
         let notification = N2SNotification()
