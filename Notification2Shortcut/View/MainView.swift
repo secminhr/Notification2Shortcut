@@ -25,7 +25,7 @@ struct MainView: View {
             }
         } detail: {
             if let notification = viewModel.selectedNotification {
-                    NotificationEditor(notification, viewModel.notificationManager)
+                NotificationEditor(notification, viewModel.notificationManager)
                     .padding(.horizontal)
             } else {
                 Text("Create or select a notification")

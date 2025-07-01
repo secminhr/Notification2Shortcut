@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct NotificationEditor: View {
-    private let viewModel: NotificationEditorViewModel
+    @StateObject private var viewModel: NotificationEditorViewModel
+    private let currentEditing: N2SNotification
     
     init(_ notification: N2SNotification, _ manager: NotificationManager) {
-        viewModel = NotificationEditorViewModel(manager, editing: notification)
+        _viewModel = StateObject(wrappedValue: NotificationEditorViewModel(manager))
+        
+        currentEditing = notification
     }
     
     var body: some View {
@@ -61,6 +64,9 @@ struct NotificationEditor: View {
             .position(CGPoint(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY))
         }
         .frame(maxWidth: 480, minHeight: 80)
+        .onAppear {
+            viewModel.setEditing(notification: currentEditing)
+        }
     }
 }
 
