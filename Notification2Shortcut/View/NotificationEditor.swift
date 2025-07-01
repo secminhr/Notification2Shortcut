@@ -17,8 +17,6 @@ struct NotificationEditor: View {
         currentEditing = notification
     }
     
-    @State private var editingTitle = false
-    
     var body: some View {
         GeometryReader { geometry in
             let totalWidth = min(geometry.size.width, 480) // 我們仍維持最大寬度
@@ -34,22 +32,10 @@ struct NotificationEditor: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(alignment: .firstTextBaseline) {
                         VStack(alignment: .leading, spacing: 2) {
-                            if editingTitle {
-                                TextField(text: $viewModel.title) {
-                                    
-                                }
-                                .onSubmit {
-                                    editingTitle = false
-                                }
-                            } else {
-                                Text(viewModel.title)
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundStyle(.primary)
-                                    .onTapGesture {
-                                        editingTitle = true
-                                    }
-                            }
-                            Text(viewModel.subtitle)
+                            ClickEditableText(text: $viewModel.title)
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.primary)
+                            ClickEditableText(text: $viewModel.subtitle, prompt: "subtitle")
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundStyle(.primary)
                         }
@@ -61,7 +47,8 @@ struct NotificationEditor: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    Text(viewModel.body)
+                    
+                    ClickEditableText(text: $viewModel.body, prompt: "body")
                         .font(.system(size: 15))
                         .lineLimit(3)
                 }
